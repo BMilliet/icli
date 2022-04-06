@@ -1,4 +1,2 @@
-# iCLI
-
-iOS command line tool.
-This tool is focused on automate iOS project workflows
+A sample command-line application with an entrypoint in `bin/`, library code
+in `lib/`, and example unit test in `test/`.
