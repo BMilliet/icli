@@ -5,6 +5,7 @@ import 'package:icli/di/di.dart';
 class StoryBoardRemoveCommand extends IcliCommand {
   @override
   final name = "storyboard-remove";
+
   @override
   final description =
       "Removes initial storyboard structure for Xcode new project template";
