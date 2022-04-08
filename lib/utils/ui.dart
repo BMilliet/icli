@@ -16,6 +16,9 @@ class UI {
       case Color.green:
         msg = _addColor(text, 32);
         break;
+      case Color.yellow:
+        msg = _addColor(text, 33);
+        break;
       case Color.blue:
         msg = _addColor(text, 34);
         break;
@@ -36,4 +39,4 @@ class UI {
   }
 }
 
-enum Color { red, green, blue, cyan }
+enum Color { red, green, blue, cyan, yellow }

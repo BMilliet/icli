@@ -8,7 +8,7 @@ class StoryBoardRemoveCommand extends IcliCommand {
 
   @override
   final description =
-      "Removes initial storyboard structure for Xcode new project template";
+      "Removes initial storyboard structure for Xcode new project template\nThis command consider the default new project structure.";
 
   StoryBoardRemoveUseCase? storyBoardRemoveUseCase;
 

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:icli/di/di.dart';
@@ -23,18 +24,39 @@ class FileHelper {
     }
   }
 
-  Future<List<String>> dirContent(String path) async {
-    final dir = Directory(path);
-    final list = dir.list(recursive: false).forEach((element) {
-      if (element.path.endsWith(".xcodeproj")) {
-        print("found");
+  Future<void> rm(String path) async {
+    if (await File(path).exists()) {
+      ui?.echo("Deleting file => $path", Color.yellow);
+      await File(path).delete();
+    } else {
+      ui?.echo("There is no file to be removed at: $path", Color.yellow);
+      return;
+    }
+  }
+
+  Future<String?> find(RegExp regex, String path,
+      {bool recursive: false}) async {
+    final list = await dirContent(path, recursive: recursive);
+
+    for (var e in list) {
+      final match = regex.firstMatch(e);
+
+      if (match != null) {
+        return match.group(0);
       }
-    });
+    }
 
-    print(list);
+    return null;
+  }
 
-    // find .xcodeproj to get main app name
+  Future<List<String>> dirContent(String path, {bool recursive = false}) async {
+    final dir = Directory(path);
+    return await dir.list(recursive: recursive).map((e) => e.path).toList();
+  }
 
-    return [""];
+  readFile(String path) async {
+    final file = File(path);
+    final content = await file.readAsLines(encoding: utf8);
+    print(content);
   }
 }
