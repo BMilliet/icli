@@ -24,18 +24,63 @@ class FileHelper {
     }
   }
 
-  Future<void> rm(String path) async {
-    if (await File(path).exists()) {
-      ui?.echo("Deleting file => $path", Color.yellow);
-      await File(path).delete();
+  Future<void> rm(List<String> paths,
+      {bool pbxRemoval = false, String? pbxPath}) async {
+    for (var file in paths) {
+      if (await File(file).exists()) {
+        ui?.echo("Deleting file => $file", Color.yellow);
+        await File(file).delete();
+      } else {
+        ui?.echo("There is no file to be removed at: $file", Color.yellow);
+        return;
+      }
+    }
+
+    if (pbxRemoval) {
+      await _removePbxReferences(paths, pbxPath);
+    }
+  }
+
+  _removePbxReferences(List<String> paths, String? pbxPath) async {
+    List<String> fileNames = [];
+
+    if (pbxPath == null) {
+      ui?.error("Missing pbx path");
     } else {
-      ui?.echo("There is no file to be removed at: $path", Color.yellow);
-      return;
+      final regx = RegExp(r'.*\/(\w+)\.\w+');
+      for (var e in paths) {
+        final match = regx.firstMatch(e);
+        if (match != null) {
+          fileNames.add(match.group(1).toString());
+        }
+      }
+
+      print("search files $fileNames");
+
+      File pbx = File(pbxPath);
+      final filesLines = await pbx.readAsLines();
+      List<int> linesToRemove = [];
+      int index = 0;
+
+      for (var l in filesLines) {
+        if (l.contains("Main")) {
+          linesToRemove.add(index);
+        }
+        index++;
+      }
+
+      print("Found Main on lines $linesToRemove");
+
+      for (var i in linesToRemove) {
+        filesLines.removeAt(i);
+      }
+
+      //await pbx.writeAsString(filesLines.join("\n"));
     }
   }
 
   Future<String?> find(RegExp regex, String path,
-      {bool recursive: false}) async {
+      {bool recursive = false}) async {
     final list = await dirContent(path, recursive: recursive);
 
     for (var e in list) {

@@ -18,10 +18,10 @@ class StoryBoardRemoveUseCase {
   Future<void> run() async {
     final xcodeproj = await fileHelper?.find(RegExp(r'.*\.xcodeproj'), '.');
     final projectName = xcodeproj?.replaceFirst('.xcodeproj', '');
+    final pbxPath = "$xcodeproj/project.pbxproj";
 
     if (projectName != null) {
-      await _removeMainStoryboard(projectName);
-      await _removeSceneDelegate(projectName);
+      await _removeFiles(projectName, pbxPath);
       await _overrideInfoplist(projectName);
       await _overrideAppDelegate(projectName);
     } else {
@@ -29,12 +29,13 @@ class StoryBoardRemoveUseCase {
     }
   }
 
-  Future<void> _removeMainStoryboard(String projectDir) async {
-    await fileHelper?.rm(projectDir + "/Base.lproj/Main.storyboard");
-  }
+  Future<void> _removeFiles(String projectDir, String pbxPath) async {
+    final files = [
+      "$projectDir/Base.lproj/Main.storyboard",
+      "$projectDir/SceneDelegate.swift"
+    ];
 
-  Future<void> _removeSceneDelegate(String projectDir) async {
-    await fileHelper?.rm(projectDir + "/SceneDelegate.swift");
+    await fileHelper?.rm(files, pbxRemoval: true, pbxPath: pbxPath);
   }
 
   Future<void> _overrideInfoplist(String projectDir) async {
