@@ -58,24 +58,27 @@ class FileHelper {
       print("search files $fileNames");
 
       File pbx = File(pbxPath);
-      final filesLines = await pbx.readAsLines();
-      List<int> linesToRemove = [];
-      int index = 0;
+      List<String> filesLines = await pbx.readAsLines();
+      String fileString = filesLines.join("\n");
 
-      for (var l in filesLines) {
-        if (l.contains("Main")) {
-          linesToRemove.add(index);
-        }
-        index++;
-      }
+      // not working yet
+      fileString =
+          fileString.replaceAll(RegExp(r'(.*Main.*\=\s\{)([\s\S]*\};)'), "");
 
-      print("Found Main on lines $linesToRemove");
+      //print(fileString);
 
-      for (var i in linesToRemove) {
-        filesLines.removeAt(i);
-      }
+      // filesLines.removeWhere((e) {
+      //   if (e.contains("Main")) {
+      //     if (e.endsWith("{")) {
+      //       print("that is a block");
+      //     } else {
+      //       return true;
+      //     }
+      //   }
+      //   return false;
+      // });
 
-      //await pbx.writeAsString(filesLines.join("\n"));
+      await pbx.writeAsString(fileString);
     }
   }
 
