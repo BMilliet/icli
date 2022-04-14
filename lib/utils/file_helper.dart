@@ -55,28 +55,15 @@ class FileHelper {
         }
       }
 
-      print("search files $fileNames");
-
       File pbx = File(pbxPath);
       List<String> filesLines = await pbx.readAsLines();
       String fileString = filesLines.join("\n");
 
-      // not working yet
-      fileString =
-          fileString.replaceAll(RegExp(r'(.*Main.*\=\s\{)([\s\S]*\};)'), "");
-
-      //print(fileString);
-
-      // filesLines.removeWhere((e) {
-      //   if (e.contains("Main")) {
-      //     if (e.endsWith("{")) {
-      //       print("that is a block");
-      //     } else {
-      //       return true;
-      //     }
-      //   }
-      //   return false;
-      // });
+      for (var f in fileNames) {
+        fileString = fileString.replaceAll(
+            RegExp(r"(.*" "$f" r".*\=\s\{([\s\S])+?(\};))"), "");
+        fileString = fileString.replaceAll(RegExp(r"(.*" '$f' ".*)"), "");
+      }
 
       await pbx.writeAsString(fileString);
     }
