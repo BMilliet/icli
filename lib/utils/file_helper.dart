@@ -1,97 +1,95 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:icli/di/di.dart';
+import 'package:icli/utils/pbx_helper.dart';
 import 'package:icli/utils/ui.dart';
 
 class FileHelper {
   UI? ui;
+  PbxHelper? pbxHelper;
 
-  FileHelper({UI? ui}) {
+  FileHelper({UI? ui, PbxHelper? pbxHelper}) {
     this.ui = get<UI>(object: ui);
+    this.pbxHelper = get<PbxHelper>(object: pbxHelper);
   }
 
-  Future<void> cp(String from, String to, bool force) async {
-    if (await File(to).exists() && !force) {
+  cp(String from, String to, bool force) {
+    if (File(to).existsSync() && !force) {
       ui?.error(
           "File $to already exists, to override run the command with -f option");
     }
 
     try {
-      await File(from).copy(to);
+      File(from).copySync(to);
     } catch (e) {
       ui?.error("Could not copy file $from to $to\nError => $e");
     }
   }
 
-  Future<void> rm(List<String> paths,
-      {bool pbxRemoval = false, String? pbxPath}) async {
+  add(List<String> files) {
+    ui?.echo("Adding files\n$files", Color.cyan);
+    for (var f in files) {
+      File(f).createSync();
+    }
+    ui?.echo("Adding references", Color.cyan);
+    // TODO
+  }
+
+  rm(List<String> paths, {String? removeFromPbx}) {
+    if (removeFromPbx != null) {
+      final files = fileNames(paths);
+      pbxHelper?.removeReferences(files, removeFromPbx);
+    }
+
     for (var file in paths) {
-      if (await File(file).exists()) {
-        ui?.echo("Deleting file => $file", Color.yellow);
-        await File(file).delete();
-      } else {
-        ui?.echo("There is no file to be removed at: $file", Color.yellow);
-        return;
-      }
-    }
-
-    if (pbxRemoval) {
-      await _removePbxReferences(paths, pbxPath);
+      _rm(file);
     }
   }
 
-  _removePbxReferences(List<String> paths, String? pbxPath) async {
-    List<String> fileNames = [];
-
-    if (pbxPath == null) {
-      ui?.error("Missing pbx path");
+  _rm(String file) {
+    if (File(file).existsSync()) {
+      ui?.echo("Deleting file => $file", Color.yellow);
+      File(file).deleteSync();
     } else {
-      final regx = RegExp(r'.*\/(\w+)\.\w+');
-      for (var e in paths) {
-        final match = regx.firstMatch(e);
-        if (match != null) {
-          fileNames.add(match.group(1).toString());
-        }
-      }
-
-      File pbx = File(pbxPath);
-      List<String> filesLines = await pbx.readAsLines();
-      String fileString = filesLines.join("\n");
-
-      for (var f in fileNames) {
-        fileString = fileString.replaceAll(
-            RegExp(r"(.*" "$f" r".*\=\s\{([\s\S])+?(\};))"), "");
-        fileString = fileString.replaceAll(RegExp(r"(.*" '$f' ".*)"), "");
-      }
-
-      await pbx.writeAsString(fileString);
+      ui?.echo("There is no file to be removed at: $file", Color.yellow);
+      return;
     }
   }
 
-  Future<String?> find(RegExp regex, String path,
-      {bool recursive = false}) async {
-    final list = await dirContent(path, recursive: recursive);
+  String? find(RegExp regex, String path, {bool recursive = false}) {
+    final list = dirContent(path, recursive: recursive);
 
     for (var e in list) {
       final match = regex.firstMatch(e);
-
       if (match != null) {
         return match.group(0);
       }
     }
-
     return null;
   }
 
-  Future<List<String>> dirContent(String path, {bool recursive = false}) async {
+  List<String> dirContent(String path, {bool recursive = false}) {
     final dir = Directory(path);
-    return await dir.list(recursive: recursive).map((e) => e.path).toList();
+    return dir.listSync(recursive: recursive).map((e) => e.path).toList();
   }
 
-  readFile(String path) async {
-    final file = File(path);
-    final content = await file.readAsLines(encoding: utf8);
-    print(content);
+  List<Map<FileSystemEntityType, String>> fileNames(List<String> paths) {
+    List<Map<FileSystemEntityType, String>> fileNames = [];
+
+    final regx = RegExp(r'.*\/(\w+)\.\w+');
+    for (var e in paths) {
+      FileSystemEntityType type;
+      if (e.endsWith(".storyboard")) {
+        type = FileSystemEntityType.directory;
+      } else {
+        type = FileSystemEntity.typeSync(e);
+      }
+
+      final match = regx.firstMatch(e);
+      if (match != null) {
+        fileNames.add({type: match.group(1).toString()});
+      }
+    }
+    return fileNames;
   }
 }

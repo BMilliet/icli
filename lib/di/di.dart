@@ -4,6 +4,7 @@ import 'package:icli/commands/add_gitignore/domain/add_gitignore_usecase.dart';
 import 'package:icli/commands/storyboard_remove/domain/storyboard_remove_usecase.dart';
 import 'package:icli/commands/storyboard_remove/storyboard_remove_command.dart';
 import 'package:icli/utils/file_helper.dart';
+import 'package:icli/utils/pbx_helper.dart';
 import 'package:icli/utils/resources.dart';
 import 'package:icli/utils/ui.dart';
 
@@ -22,4 +23,5 @@ injectInstances() {
   GetIt.I.registerLazySingleton(() => UI());
   GetIt.I.registerLazySingleton(() => FileHelper());
   GetIt.I.registerLazySingleton(() => Resources());
+  GetIt.I.registerLazySingleton(() => PbxHelper());
 }

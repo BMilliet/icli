@@ -15,47 +15,47 @@ class StoryBoardRemoveUseCase {
     this.resources = get<Resources>(object: resources);
   }
 
-  Future<void> run() async {
-    final xcodeproj = await fileHelper?.find(RegExp(r'.*\.xcodeproj'), '.');
+  run() {
+    final xcodeproj = fileHelper?.find(RegExp(r'.*\.xcodeproj'), '.');
     final projectName = xcodeproj?.replaceFirst('.xcodeproj', '');
     final pbxPath = "$xcodeproj/project.pbxproj";
 
     if (projectName != null) {
-      await _removeFiles(projectName, pbxPath);
-      await _overrideInfoplist(projectName);
-      await _overrideAppDelegate(projectName);
+      _removeFiles(projectName, pbxPath);
+      _overrideInfoplist(projectName);
+      _overrideAppDelegate(projectName);
     } else {
       ui?.error("Cound not find main project dir");
     }
   }
 
-  Future<void> _removeFiles(String projectDir, String pbxPath) async {
+  _removeFiles(String projectDir, String pbxPath) {
     final files = [
       "$projectDir/Base.lproj/Main.storyboard",
       "$projectDir/SceneDelegate.swift"
     ];
 
-    await fileHelper?.rm(files, pbxRemoval: true, pbxPath: pbxPath);
+    fileHelper?.rm(files, removeFromPbx: pbxPath);
   }
 
-  Future<void> _overrideInfoplist(String projectDir) async {
+  _overrideInfoplist(String projectDir) {
     final info = resources?.infoplist();
     final old = projectDir + "/Info.plist";
 
     if (info != null) {
-      await fileHelper?.cp(info, old, true);
+      fileHelper?.cp(info, old, true);
       ui?.echo("overwritten Info.plist", Color.green);
     } else {
       ui?.error("could not get Info.plist template");
     }
   }
 
-  Future<void> _overrideAppDelegate(String projectDir) async {
+  _overrideAppDelegate(String projectDir) {
     final info = resources?.appDelegate();
     final old = projectDir + "/AppDelegate.swift";
 
     if (info != null) {
-      await fileHelper?.cp(info, old, true);
+      fileHelper?.cp(info, old, true);
       ui?.echo("overwritten AppDelegate.swift", Color.green);
     } else {
       ui?.error("could not get AppDelegate template");
