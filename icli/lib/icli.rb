@@ -14,10 +14,11 @@ module ICLI
   autoload :StoryboardRemoveCommand, "#{commands}/storyboard_remove_command"
 
   # usecases
-  autoload :AddGitignoreUsecase, "#{usecases}/add_gitignore/add_gitignore_usecase"
-  autoload :StoryboardUsecase,   "#{usecases}/storyboard_remove/storyboard_remove_usecase"
+  autoload :AddGitignoreUsecase,     "#{usecases}/add_gitignore/add_gitignore_usecase"
+  autoload :StoryboardRemoveUsecase, "#{usecases}/storyboard_remove/storyboard_remove_usecase"
 
   # utils
   autoload :FileHelper, "#{utils}/file_helper"
   autoload :Resources,  "#{utils}/resources"
+  autoload :Project,    "#{utils}/project"
 end

@@ -5,7 +5,11 @@ module ICLI
   # Dependencies are inject here for now
   class StoryboardRemoveCommand
     def run
-      # TODO: acutal command
+      resources = Resources.new
+      file_helper = FileHelper.new
+      project = Project.new
+
+      StoryboardRemoveUsecase.new(file_helper: file_helper, resources: resources, project: project).run
     end
   end
 end
