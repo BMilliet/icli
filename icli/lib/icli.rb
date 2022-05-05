@@ -5,20 +5,24 @@
 module ICLI
   relative = __dir__
   usecases = "#{relative}/usecase"
-  commands = "#{relative}/command"
   utils    = "#{relative}/utils"
-
-  # command
-  autoload :CommandRunner,           "#{relative}/command_runner"
-  autoload :AddGitignoreCommand,     "#{commands}/add_gitignore_command"
-  autoload :StoryboardRemoveCommand, "#{commands}/storyboard_remove_command"
 
   # usecases
   autoload :AddGitignoreUsecase,     "#{usecases}/add_gitignore/add_gitignore_usecase"
   autoload :StoryboardRemoveUsecase, "#{usecases}/storyboard_remove/storyboard_remove_usecase"
 
   # utils
-  autoload :FileHelper, "#{utils}/file_helper"
-  autoload :Resources,  "#{utils}/resources"
-  autoload :Project,    "#{utils}/project"
+  autoload :UI,             "#{utils}/ui"
+  autoload :Project,        "#{utils}/project"
+  autoload :Resources,      "#{utils}/resources"
+  autoload :FileHelper,     "#{utils}/file_helper"
+  autoload :ServiceLocator, "#{utils}/service_locator"
+
+  # initialize service locator
+  # inject common classes
+  ServiceLocator.new
+  ServiceLocator.register(UI)
+  ServiceLocator.register(Resources)
+  ServiceLocator.register(FileHelper)
+  ServiceLocator.register(Project)
 end

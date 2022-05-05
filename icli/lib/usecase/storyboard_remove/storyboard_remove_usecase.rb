@@ -4,10 +4,11 @@ module ICLI
   # Removes storyboard structure from Xcode new project scaffold.
   # It will remove some files, modifies info.plist and pbx.
   class StoryboardRemoveUsecase
-    def initialize(file_helper:, resources:, project:)
-      @file_helper = file_helper
-      @resources = resources
-      @project = project
+    def initialize
+      @project = ServiceLocator.resolve Project
+      @file_helper = ServiceLocator.resolve FileHelper
+      @resources = ServiceLocator.resolve Resources
+      @ui = ServiceLocator.resolve UI
     end
 
     def run
