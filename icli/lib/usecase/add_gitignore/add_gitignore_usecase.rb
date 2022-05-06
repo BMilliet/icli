@@ -12,7 +12,6 @@ module ICLI
     end
 
     def run(force: false)
-      puts 'adding git ignore'
       @ignore = '.gitignore'
       force ? overwrite : create
     end

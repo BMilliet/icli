@@ -24,7 +24,7 @@ module ICLI
 
     # This method should only be used in tests
     def self.register_literal(key, obj)
-      @instances << { key => obj }
+      @instances << { key => obj.new }
     end
 
     def self.class_name(obj)
@@ -33,6 +33,10 @@ module ICLI
 
     def self.error(name)
       UI.new.error "Could not resolve class #{name}"
+    end
+
+    def self.clear
+      @instances = []
     end
   end
 end

@@ -1,22 +1,32 @@
 # frozen_string_literal: true
 
+# Mock version of FileHelper
 class FileHelperMock
+  attr_accessor :cps, :find_files_list, :existing_paths
+
   def initialize
-    @cps = []
-    @find_files = []
+    clear
   end
 
   def cp(from:, to:)
     @cps << { from: from, to: to }
-    FileUtils.cp from, to, verbose: true
   end
 
   def exists?(path)
-    # todo
-    false
+    @existing_paths.include? path
   end
 
   def find_files(path, names)
-    @find_files << { path: path, names: names }
+    @find_files_lits << { path: path, names: names }
+  end
+
+  def add_path(path)
+    @existing_paths << path
+  end
+
+  def clear
+    @cps = []
+    @find_files_lits = []
+    @existing_paths = []
   end
 end
