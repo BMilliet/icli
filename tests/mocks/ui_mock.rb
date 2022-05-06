@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Mock version of UI calss
+# Mock version of UI class
 class UIMock
   attr_accessor :echos, :error_msm
 

@@ -19,10 +19,10 @@ module ICLI
   autoload :ServiceLocator, "#{utils}/service_locator"
 
   # initialize service locator
-  # inject common classes
   ServiceLocator.new
+  # inject common classes
   ServiceLocator.register(UI)
+  ServiceLocator.register(Project)
   ServiceLocator.register(Resources)
   ServiceLocator.register(FileHelper)
-  ServiceLocator.register(Project)
 end

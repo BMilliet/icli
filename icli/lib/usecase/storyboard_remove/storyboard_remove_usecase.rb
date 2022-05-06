@@ -5,10 +5,10 @@ module ICLI
   # It will remove some files, modifies info.plist and pbx.
   class StoryboardRemoveUsecase
     def initialize
-      @project = ServiceLocator.resolve Project
-      @file_helper = ServiceLocator.resolve FileHelper
-      @resources = ServiceLocator.resolve Resources
       @ui = ServiceLocator.resolve UI
+      @project = ServiceLocator.resolve Project
+      @resources = ServiceLocator.resolve Resources
+      @file_helper = ServiceLocator.resolve FileHelper
     end
 
     def run

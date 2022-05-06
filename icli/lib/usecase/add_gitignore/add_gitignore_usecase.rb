@@ -6,9 +6,9 @@ module ICLI
   # It will alocate a internal copy example from inside resources.
   class AddGitignoreUsecase
     def initialize
-      @file_helper = ServiceLocator.resolve FileHelper
-      @resources = ServiceLocator.resolve Resources
       @ui = ServiceLocator.resolve UI
+      @resources = ServiceLocator.resolve Resources
+      @file_helper = ServiceLocator.resolve FileHelper
     end
 
     def run(force: false)

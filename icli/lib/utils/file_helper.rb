@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
 require 'fileutils'
-require 'find'
 
 module ICLI
   # FileUtils and File wrapper.
   class FileHelper
+    def initialize
+      @ignored = ['xcuserdata', 'xcsharedata', '.git']
+    end
+
     def cp(from:, to:)
       FileUtils.cp from, to, verbose: true
     end
@@ -15,8 +18,9 @@ module ICLI
     end
 
     def find_files(path, names)
-      Find.find(path).select { |p| puts p }
-      Find.find(path).select { |p| names.any? { |n| n.end_with? p } }
+      Dir.glob("#{path}/**/*")
+         .reject { |f| @ignored.any? { |i| f.include? i } }
+         .select { |f| names.any? { |i| f.end_with? i } }
     end
   end
 end
