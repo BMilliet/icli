@@ -2,7 +2,7 @@
 
 # Mock version of FileHelper
 class FileHelperMock
-  attr_accessor :cps, :find_files_list, :existing_paths
+  attr_accessor :cps, :find_files_list, :existing_paths, :rms
 
   def initialize
     clear
@@ -10,6 +10,10 @@ class FileHelperMock
 
   def cp(from:, to:)
     @cps << { from: from, to: to }
+  end
+
+  def rm(paths:, force: false)
+    paths.each { |p| rms << { path: p, force: force } }
   end
 
   def exists?(path)
