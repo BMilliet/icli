@@ -20,9 +20,12 @@ module ICLI
       proj = @project.open('.')
       project_path = proj.targets.first
 
-      files_map = [
-        @main, @scene, @delegate, @plist
-      ].map { |f| { f => "#{project_path}/#{f}" } }
+      files_map = {
+        @main => "#{project_path}/#{@main}",
+        @scene => "#{project_path}/#{@scene}",
+        @plist => "#{project_path}/#{@plist}",
+        @delegate => "#{project_path}/#{@delegate}"
+      }
 
       remove_files files_map
       overwrite_app_delegate files_map
@@ -32,22 +35,18 @@ module ICLI
     private
 
     def remove_files(files_map)
-      files_to_remove = files_map
-                        .reject { |a| (a[@main].nil? && a[@scene].nil?) }
-                        .map(&:values).flatten
+      files_to_remove = [files_map[@main], files_map[@scene]]
 
       @file_helper.rm paths: files_to_remove
       # TODO: remove from pbx
     end
 
     def overwrite_app_delegate(files_map)
-      delegate = files_map.reject { |a| a[@delegate].nil? }.map(&:values).flatten.first
-      @file_helper.cp from: @resources.app_delegate, to: delegate
+      @file_helper.cp from: @resources.app_delegate, to: files_map[@delegate]
     end
 
     def overwrite_app_infoplist(files_map)
-      plist = files_map.reject { |a| a[@plist].nil? }.map(&:values).flatten.first
-      @file_helper.cp from: @resources.infoplist, to: plist
+      @file_helper.cp from: @resources.infoplist, to: files_map[@plist]
     end
 
     def find_files_in_project
