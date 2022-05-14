@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../mocks/file_helper_mock'
-require_relative '../mocks/project_mock'
-require_relative '../mocks/ui_mock'
-
 module ICLI
   class StoryboardRemoveUsecaseTests < Minitest::Test
     def setup
@@ -14,20 +10,31 @@ module ICLI
       ServiceLocator.register_literal('FileHelper', FileHelperMock)
     end
 
-    def remove_storyboard_from_project_scaffold
+    def test_remove_storyboard_from_project_scaffold
       @ui = ServiceLocator.resolve UI
       @project = ServiceLocator.resolve Project
       @resources = ServiceLocator.resolve Resources
       @file_helper = ServiceLocator.resolve FileHelper
 
+      mock_project = ProjectModelMock.new(targets: ['MockProject', 'MockProjectTests'])
+      project_path = mock_project.targets.first
+
+      @project.project_to_open['.'] = mock_project
+
       StoryboardRemoveUsecase.new.run
 
       correct_cp = @file_helper.cps == {
-        @main => "#{project_path}/#{@main}",
-        @scene => "#{project_path}/#{@scene}"
+        @resources.infoplist => "#{project_path}/Info.plist",
+        @resources.app_delegate => "#{project_path}/AppDelegate.swift"
+      }
+
+      correct_file_rms = @file_helper.rms == {
+        "#{project_path}/Base.lproj/Main.storyboard" => false,
+        "#{project_path}/SceneDelegate.swift" => false
       }
 
       assert correct_cp
+      assert correct_file_rms
     end
   end
 end
