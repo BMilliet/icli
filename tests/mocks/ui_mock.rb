@@ -9,7 +9,7 @@ class UIMock
   end
 
   def echo(msg, color = nil)
-    @echos << { msg: msg, color: color }
+    @echos[msg] = color
   end
 
   def error(msg)
@@ -18,6 +18,6 @@ class UIMock
 
   def clear
     @error_msg = nil
-    @echos = []
+    @echos = {}
   end
 end

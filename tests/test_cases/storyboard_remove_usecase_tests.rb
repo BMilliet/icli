@@ -14,6 +14,20 @@ module ICLI
       ServiceLocator.register_literal('FileHelper', FileHelperMock)
     end
 
-    # TODO: test
+    def remove_storyboard_from_project_scaffold
+      @ui = ServiceLocator.resolve UI
+      @project = ServiceLocator.resolve Project
+      @resources = ServiceLocator.resolve Resources
+      @file_helper = ServiceLocator.resolve FileHelper
+
+      StoryboardRemoveUsecase.new.run
+
+      correct_cp = @file_helper.cps == {
+        @main => "#{project_path}/#{@main}",
+        @scene => "#{project_path}/#{@scene}"
+      }
+
+      assert correct_cp
+    end
   end
 end

@@ -4,27 +4,27 @@ module ICLI
   # ServiceLocator should handle common classes.
   # This should avoid unnecessary class inits.
   class ServiceLocator
-    @instances = []
+    @instances = {}
 
     def initialize
-      @instances = []
+      @instances = {}
     end
 
     def self.resolve(type)
       target = class_name(type)
-      found = @instances.reject { |a| a[target].nil? }
-      found.empty? ? error(target) : found.first[target]
+      found = @instances[target]
+      found.nil? ? error(target) : found
     end
 
     def self.register(obj)
       obj = obj.new
       key = obj.class.name.split('::').last
-      @instances << { key => obj }
+      @instances[key] = obj
     end
 
     # This method should only be used in tests
     def self.register_literal(key, obj)
-      @instances << { key => obj.new }
+      @instances[key] = obj.new
     end
 
     def self.class_name(obj)
@@ -36,7 +36,7 @@ module ICLI
     end
 
     def self.clear
-      @instances = []
+      @instances = {}
     end
   end
 end

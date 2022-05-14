@@ -19,13 +19,11 @@ module ICLI
 
       AddGitignoreUsecase.new.run
 
-      correct_cp = @file_helper.cps.first == { from: @resources.gitignore, to: '.gitignore' }
-      number_of_operations = @file_helper.cps.length == 1
+      correct_cp = @file_helper.cps == { @resources.gitignore => '.gitignore' }
       no_ignore_registered = @file_helper.existing_paths.empty?
       no_echos = @ui.echos.empty?
 
       assert correct_cp
-      assert number_of_operations
       assert no_ignore_registered
       assert no_echos
     end
@@ -42,16 +40,14 @@ module ICLI
       number_of_operations = @file_helper.cps.empty?
       ignore_registered = @file_helper.exists? '.gitignore'
       paths_registered = @file_helper.existing_paths.length == 1
-      echos = @ui.echos.length == 1
-      msgs = @ui.echos[0] = {
-        msg: 'Project already have ignore. You can overwrite it with --force flag', color: 'yellow'
+      msgs = @ui.echos == {
+        'Project already have ignore. You can overwrite it with --force flag' => 'yellow'
       }
 
       assert number_of_operations
       assert ignore_registered
       assert paths_registered
       assert msgs
-      assert echos
     end
 
     def test_overwrite_gitignore_project
@@ -64,16 +60,12 @@ module ICLI
       AddGitignoreUsecase.new.run(force: true)
 
       ignore_registered = @file_helper.exists? '.gitignore'
-      correct_cp = @file_helper.cps.first == { from: @resources.gitignore, to: '.gitignore' }
-      number_of_operations = @file_helper.cps.length == 1
-      echos = @ui.echos.length == 1
-      msgs = @ui.echos[0] = { msg: 'Overwritting gitignore', color: 'yellow' }
+      correct_cp = @file_helper.cps == { @resources.gitignore => '.gitignore' }
+      msgs = @ui.echos == { 'Overwritting gitignore' => 'yellow' }
 
       assert ignore_registered
       assert correct_cp
-      assert number_of_operations
       assert msgs
-      assert echos
     end
   end
 end
