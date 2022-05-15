@@ -18,27 +18,27 @@ module ICLI
 
     def run
       proj = @project.open('.')
-      project_path = proj.targets.first
+      target_path = proj.targets.first
 
       files_map = {
-        @main => "#{project_path}/#{@main}",
-        @scene => "#{project_path}/#{@scene}",
-        @plist => "#{project_path}/#{@plist}",
-        @delegate => "#{project_path}/#{@delegate}"
+        @main => "#{target_path}/#{@main}",
+        @scene => "#{target_path}/#{@scene}",
+        @plist => "#{target_path}/#{@plist}",
+        @delegate => "#{target_path}/#{@delegate}"
       }
 
-      remove_files files_map
-      overwrite_app_delegate files_map
-      overwrite_app_infoplist files_map
+      # remove_files files_map
+      # TODO: wip need to remove storyboard reference from pbx info
+      remove_files_from_pbx proj, files_map
+      # overwrite_app_delegate files_map
+      # overwrite_app_infoplist files_map
     end
 
     private
 
     def remove_files(files_map)
       files_to_remove = [files_map[@main], files_map[@scene]]
-
       @file_helper.rm paths: files_to_remove
-      # TODO: remove from pbx
     end
 
     def overwrite_app_delegate(files_map)
@@ -51,6 +51,21 @@ module ICLI
 
     def find_files_in_project
       @file_helper.find_files '.', @files_to_remove
+    end
+
+    def remove_files_from_pbx(proj, files_map)
+      get_files_ref(proj, files_map).each { |f| @project.rm_file f }
+
+      @project.save proj
+    end
+
+    def get_files_ref(proj, files_map)
+      path_prefix = @project.absolute_path(proj)
+
+      [
+        @project.file_ref(proj, "#{path_prefix}/#{files_map[@scene]}"),
+        @project.file_ref(proj, "#{path_prefix}/#{files_map[@main]}").parent
+      ]
     end
   end
 end

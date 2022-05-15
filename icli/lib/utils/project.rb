@@ -3,8 +3,12 @@
 require 'xcodeproj'
 
 module ICLI
-  # Xcodeproj gem wrapper
+  # This class is mostrly a Xcodeproj gem wrapper
   class Project
+    def initialize
+      @ui = ServiceLocator.resolve UI
+    end
+
     def open(path)
       proj = find_xcodeproj path
       Xcodeproj::Project.open(proj)
@@ -12,6 +16,13 @@ module ICLI
 
     def save(proj)
       proj.save
+    end
+
+    def absolute_path(proj)
+      # TODO: improve this path handle
+      path = proj.path.to_s.split '/'
+      path.pop
+      path.join '/'
     end
 
     def targets(proj)
@@ -37,25 +48,25 @@ module ICLI
     end
 
     def find_by_path(group, path)
-      # puts project.groups.first.find_file_by_path('SceneDelegate.swift').real_path.to_s
       group.find_file_by_path(path)
+    end
+
+    def file_ref(project, path)
+      project.reference_for_path(path)
     end
 
     def rm_group(group)
       group.clean
     end
 
-    def rm_file(file)
-      file.remove_from_project
+    def rm_file(file_ref)
+      file_ref.remove_from_project
     end
 
     def find_xcodeproj(path)
       projects = Dir["#{path}/*.xcodeproj"]
 
-      if projects.count.zero?
-        puts 'could not find xcodeproj'
-        return
-      end
+      @ui.error("Could not find xcodeproj at path => #{path}") if projects.count.zero?
 
       projects.first
     end
