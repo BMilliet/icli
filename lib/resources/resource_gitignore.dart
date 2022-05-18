@@ -1,3 +1,9 @@
+import 'package:icli/resources/resource.dart';
+
+class ResourceGitignore implements Resource {
+  @override
+  String content() {
+    return """
 # Xcode
 #
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
@@ -90,3 +96,6 @@ fastlane/test_output
 
 iOSInjectionProject/
 
+""";
+  }
+}

@@ -1,3 +1,9 @@
+import 'package:icli/resources/resource.dart';
+
+class ResourceAppDelegate implements Resource {
+  @override
+  String content() {
+    return """
 import UIKit
 
 @main
@@ -12,4 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = ViewController()
         return true
     }
+}
+""";
+  }
 }

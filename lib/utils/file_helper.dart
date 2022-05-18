@@ -13,27 +13,37 @@ class FileHelper {
     this.pbxHelper = get<PbxHelper>(object: pbxHelper);
   }
 
-  cp(String from, String to, bool force) {
-    if (File(to).existsSync() && !force) {
-      ui?.error(
-          "File $to already exists, to override run the command with -f option");
-    }
-
-    try {
-      File(from).copySync(to);
-    } catch (e) {
-      ui?.error("Could not copy file $from to $to\nError => $e");
-    }
+  bool fileExists(String path) {
+    final File file = File(path);
+    return file.existsSync();
   }
 
-  add(List<String> files) {
-    ui?.echo("Adding files\n$files", Color.cyan);
-    for (var f in files) {
-      File(f).createSync();
-    }
-    ui?.echo("Adding references", Color.cyan);
-    // TODO
+  writeFile(String path, String content) {
+    final File file = File(path);
+    file.writeAsStringSync(content); 
   }
+
+  // cp(String from, String to, bool force) {
+  //   if (File(to).existsSync() && !force) {
+  //     ui?.error(
+  //         "File $to already exists, to override run the command with -f option");
+  //   }
+
+  //   try {
+  //     File(from).copySync(to);
+  //   } catch (e) {
+  //     ui?.error("Could not copy file $from to $to\nError => $e");
+  //   }
+  // }
+
+  // add(List<String> files) {
+  //   ui?.echo("Adding files\n$files", Color.cyan);
+  //   for (var f in files) {
+  //     File(f).createSync();
+  //   }
+  //   ui?.echo("Adding references", Color.cyan);
+  //   // TODO
+  // }
 
   rm(List<String> paths, {String? removeFromPbx}) {
     if (removeFromPbx != null) {

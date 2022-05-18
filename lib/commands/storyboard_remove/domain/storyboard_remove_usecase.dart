@@ -43,7 +43,8 @@ class StoryBoardRemoveUseCase {
     final old = projectDir + "/Info.plist";
 
     if (info != null) {
-      fileHelper?.cp(info, old, true);
+      // TODO: adjust
+      // fileHelper?.cp(info, old, true);
       ui?.echo("overwritten Info.plist", Color.green);
     } else {
       ui?.error("could not get Info.plist template");
@@ -55,7 +56,8 @@ class StoryBoardRemoveUseCase {
     final old = projectDir + "/AppDelegate.swift";
 
     if (info != null) {
-      fileHelper?.cp(info, old, true);
+      // TODO: adjust
+      // fileHelper?.cp(info, old, true);
       ui?.echo("overwritten AppDelegate.swift", Color.green);
     } else {
       ui?.error("could not get AppDelegate template");

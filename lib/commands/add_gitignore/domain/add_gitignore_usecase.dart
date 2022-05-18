@@ -14,18 +14,23 @@ class AddGitignoreUseCase {
     this.resources = get<Resources>(object: resources);
   }
 
-  Future<void> run(bool force) async {
+  run(bool force) {
     final ignore = resources?.gitignore();
 
     if (ignore != null) {
-      await _copy(ignore, ".gitignore", force);
+      _write('.gitignore', ignore, force);
     } else {
-      ui?.error("could not get gitignore template");
+      ui?.error("Could not get gitignore template or class");
     }
   }
 
-  Future<void> _copy(String from, String to, bool force) async {
-    await fileHelper?.cp(from, to, force);
-    ui?.echo("gitignore add", Color.cyan);
+  _write(String to, String content, bool force) {
+    if ((fileHelper?.fileExists(to) ?? true) && !force) {
+      ui?.echo("Current dir already have gitignore file, to override it re-run the command with --f", Color.yellow);
+      return;
+    }
+
+    fileHelper?.writeFile(to, content);
+    ui?.echo("added gitignore", Color.cyan);
   }
 }

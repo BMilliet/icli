@@ -1,23 +1,17 @@
-import 'dart:io';
+import 'package:icli/resources/resource_app_delegate.dart';
+import 'package:icli/resources/resource_gitignore.dart';
+import 'package:icli/resources/resource_infoplist.dart';
 
 class Resources {
   String gitignore() {
-    return _relative("resources/new_project/gitignore_template.txt");
+    return ResourceGitignore().content();
   }
 
   String infoplist() {
-    return _relative("resources/new_project/infoplist_template.txt");
+    return ResourceInfoplist().content();
   }
 
   String appDelegate() {
-    return _relative("resources/new_project/appdelegate_template.txt");
-  }
-
-  String _relative(path) {
-    return _root().replaceAll("bin/icli.dart", path);
-  }
-
-  String _root() {
-    return Platform.script.path;
+    return ResourceAppDelegate().content();
   }
 }
